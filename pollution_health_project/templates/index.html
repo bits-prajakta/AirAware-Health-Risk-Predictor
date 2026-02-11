@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pollution Health Risk Alert</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>🌿 AirAware Health Risk Predictor</h1>
+    <p>Enter environmental details to check health risk level.</p>
+
+    <input type="number" id="aqi" placeholder="AQI">
+    <input type="number" id="temp" placeholder="Temperature (°C)">
+    <input type="number" id="humidity" placeholder="Humidity (%)">
+    <input type="number" id="age" placeholder="Age">
+
+    <button onclick="predictRisk()">Check Risk</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+function predictRisk() {
+    let aqi = document.getElementById("aqi").value;
+    let temp = document.getElementById("temp").value;
+    let humidity = document.getElementById("humidity").value;
+    let age = document.getElementById("age").value;
+
+    fetch("/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            aqi: aqi,
+            temp: temp,
+            humidity: humidity,
+            age: age
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        let color = {
+            "Low": "green",
+            "Medium": "orange",
+            "High": "red"
+        };
+
+        document.getElementById("result").innerHTML =
+            "Health Risk Level: <span style='color:" + color[data.risk] + "'>" 
+            + data.risk + "</span>";
+    });
+}
+</script>
+
+</body>
+</html>
